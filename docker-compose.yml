@@ -37,7 +37,6 @@ services:
       - .env
     command: gunicorn --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-4} lms.wsgi:application
     volumes:
-      - ./:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     depends_on:
@@ -56,8 +55,6 @@ services:
     env_file:
       - .env
     command: celery -A lms worker --loglevel=info
-    volumes:
-      - ./:/app
     depends_on:
       db:
         condition: service_healthy
@@ -72,8 +69,6 @@ services:
     env_file:
       - .env
     command: celery -A lms beat --loglevel=info
-    volumes:
-      - ./:/app
     depends_on:
       db:
         condition: service_healthy

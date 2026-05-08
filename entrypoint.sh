@@ -9,6 +9,8 @@ if [ -n "$POSTGRES_HOST" ]; then
 fi
 
 python manage.py migrate --noinput
-python manage.py collectstatic --noinput || true
+if [ "${SKIP_COLLECTSTATIC:-0}" != "1" ]; then
+  python manage.py collectstatic --noinput
+fi
 
 exec "$@"
