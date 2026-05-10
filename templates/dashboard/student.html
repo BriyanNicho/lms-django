@@ -3,23 +3,31 @@
 {% block title %}Dashboard Mahasiswa - LMS{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold">
-            <i class="bi bi-graph-up"></i> Dashboard Mahasiswa
-        </h2>
-        <p class="text-muted">Selamat datang di Portal Belajar. Pilih kursus untuk mulai belajar.</p>
+<div class="page-header d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <span class="page-icon">
+            <i class="bi bi-graph-up"></i>
+        </span>
+        <div>
+            <h2 class="page-title mb-1">Dashboard Mahasiswa</h2>
+            <p class="page-subtitle">Selamat datang di Portal Belajar. Pilih kursus untuk mulai belajar.</p>
+        </div>
     </div>
+    <span class="badge bg-primary-subtle text-primary mt-3 mt-md-0">Akses cepat kursus favoritmu</span>
 </div>
 
 <!-- Quick Stats -->
 <div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <h6 class="card-title">Total Kursus</h6>
-                <h3 class="mb-0">{{ available_courses.count }}</h3>
+    <div class="col-md-6 col-lg-4">
+        <div class="stat-card stat-card--primary">
+            <div>
+                <p class="stat-title">Total Kursus</p>
+                <h3 class="stat-value">{{ available_courses.count }}</h3>
+                <small class="text-muted">Kursus tersedia untuk dipelajari</small>
             </div>
+            <span class="stat-icon">
+                <i class="bi bi-journal-bookmark"></i>
+            </span>
         </div>
     </div>
 </div>
@@ -27,14 +35,14 @@
 <!-- Daftar Kursus -->
 <div class="row" id="kursus">
     <div class="col-12 mb-3">
-        <h4 class="fw-bold">
-            <i class="bi bi-book-fill"></i> Kursus Tersedia
+        <h4 class="section-title d-flex align-items-center gap-2">
+            <i class="bi bi-book-fill text-primary"></i> Kursus Tersedia
         </h4>
     </div>
 
     {% for course in available_courses %}
     <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm">
+        <div class="card h-100">
             <div class="card-header bg-light">
                 <h6 class="mb-0 text-primary">{{ course.title }}</h6>
             </div>
@@ -47,16 +55,16 @@
                 <!-- Course Stats -->
                 <div class="row text-center mb-3 small">
                     <div class="col-6">
-                        <small class="badge bg-info">{{ course.materials.count }} Materi</small>
+                        <small class="badge bg-info-subtle text-info">{{ course.materials.count }} Materi</small>
                     </div>
                     <div class="col-6">
-                        <small class="badge bg-warning">{{ course.assignments.count }} Tugas</small>
+                        <small class="badge bg-warning-subtle text-warning">{{ course.assignments.count }} Tugas</small>
                     </div>
                     <div class="col-6 mt-2">
-                        <small class="badge bg-danger">{{ course.quizzes.count }} Kuis</small>
+                        <small class="badge bg-danger-subtle text-danger">{{ course.quizzes.count }} Kuis</small>
                     </div>
                     <div class="col-6 mt-2">
-                        <small class="badge bg-success">{{ course.threads.count }} Diskusi</small>
+                        <small class="badge bg-success-subtle text-success">{{ course.threads.count }} Diskusi</small>
                     </div>
                 </div>
             </div>
@@ -90,7 +98,7 @@
 <!-- Info Section -->
 <div class="row mt-5">
     <div class="col-md-4 mb-3">
-        <div class="card border-0 bg-light">
+        <div class="card info-card border-0">
             <div class="card-body">
                 <h6 class="card-title">
                     <i class="bi bi-lightbulb text-warning"></i> Tip Belajar
@@ -100,7 +108,7 @@
         </div>
     </div>
     <div class="col-md-4 mb-3">
-        <div class="card border-0 bg-light">
+        <div class="card info-card border-0">
             <div class="card-body">
                 <h6 class="card-title">
                     <i class="bi bi-clock text-info"></i> Deadline
@@ -110,7 +118,7 @@
         </div>
     </div>
     <div class="col-md-4 mb-3">
-        <div class="card border-0 bg-light">
+        <div class="card info-card border-0">
             <div class="card-body">
                 <h6 class="card-title">
                     <i class="bi bi-question-circle text-danger"></i> Bantuan

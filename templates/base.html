@@ -6,51 +6,260 @@
     <title>{% block title %}LMS Django{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --lms-primary: #4f46e5;
+            --lms-primary-soft: #eef2ff;
+            --lms-secondary: #0ea5e9;
+            --lms-success: #16a34a;
+            --lms-warning: #f59e0b;
+            --lms-danger: #ef4444;
+            --lms-primary-tint: rgba(79, 70, 229, 0.18);
+            --lms-secondary-tint: rgba(14, 165, 233, 0.18);
+            --lms-success-tint: rgba(22, 163, 74, 0.18);
+            --lms-warning-tint: rgba(245, 158, 11, 0.22);
+            --lms-danger-tint: rgba(239, 68, 68, 0.18);
+            --lms-bg: #f4f7fe;
+            --lms-surface: #ffffff;
+            --lms-surface-alt: #f8fafc;
+            --lms-border: #e2e8f0;
+            --lms-text: #1f2937;
+            --lms-muted: #64748b;
+            --lms-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            --lms-shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.06);
+        }
+
         body {
-            background-color: #f8f9fa;
+            background-color: var(--lms-bg);
+            color: var(--lms-text);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        .navbar-modern {
+            background: #ffffff;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
         }
+
+        .navbar-modern .navbar-brand,
+        .navbar-modern .nav-link {
+            color: var(--lms-text);
+            font-weight: 600;
+        }
+
+        .navbar-modern .nav-link:hover,
+        .navbar-modern .nav-link:focus {
+            color: var(--lms-primary);
+        }
+
+        .navbar-modern .navbar-toggler {
+            border: none;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.12);
+            color: #dc2626;
+            border: none;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #b91c1c;
+        }
+
+        .page-shell {
+            padding-bottom: 2.5rem;
+        }
+
         .sidebar {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background-color: var(--lms-surface);
+            border-radius: 16px;
+            box-shadow: var(--lms-shadow-sm);
             position: sticky;
             top: 80px;
         }
+
         .sidebar .nav-link {
-            color: #333;
-            border-left: 3px solid transparent;
+            color: var(--lms-muted);
+            border-radius: 12px;
+            padding: 0.55rem 0.85rem;
             margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
         }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background-color: #f0f0f0;
-            border-left-color: #0d6efd;
-            color: #0d6efd;
+
+        .sidebar .nav-link:hover {
+            background-color: #f1f5f9;
+            color: var(--lms-primary);
         }
+
+        .sidebar .nav-link.active {
+            background-color: var(--lms-primary);
+            color: #fff;
+            border-radius: 16px;
+        }
+
+        .sidebar .nav-link.active i {
+            color: #fff;
+        }
+
         .card {
-            border: none;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border: none !important;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         }
-        .btn-custom {
-            border-radius: 6px;
+
+        .card-header {
+            border-bottom: 1px solid var(--lms-border);
+            background-color: transparent;
         }
-        .badge-custom {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
+
+        .content-area {
+            background: var(--lms-surface);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--lms-shadow);
+        }
+
+        .page-header {
+            background: var(--lms-surface);
+            border-radius: 18px;
+            box-shadow: var(--lms-shadow-sm);
+            padding: 24px;
+        }
+
+        .page-header .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .page-header .page-subtitle {
+            color: var(--lms-muted);
+            margin-bottom: 0;
+        }
+
+        .page-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--lms-primary-soft);
+            color: var(--lms-primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--lms-surface);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: var(--lms-shadow-sm);
+        }
+
+        .stat-title {
+            color: var(--lms-muted);
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .stat-card--primary .stat-icon {
+            background: var(--lms-primary-tint);
+            color: var(--lms-primary);
+        }
+
+        .stat-card--info .stat-icon {
+            background: var(--lms-secondary-tint);
+            color: var(--lms-secondary);
+        }
+
+        .stat-card--success .stat-icon {
+            background: var(--lms-success-tint);
+            color: var(--lms-success);
+        }
+
+        .stat-card--warning .stat-icon {
+            background: var(--lms-warning-tint);
+            color: var(--lms-warning);
+        }
+
+        .stat-card--danger .stat-icon {
+            background: var(--lms-danger-tint);
+            color: var(--lms-danger);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .info-card {
+            background: var(--lms-surface-alt);
+            border-radius: 16px;
+            box-shadow: none;
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 0.45rem 0.8rem;
+            border-radius: 16px;
+            font-weight: 600;
+        }
+
+        footer {
+            background: transparent;
+        }
+
+        @media (max-width: 991.98px) {
+            .content-area {
+                padding: 20px;
+            }
+
+            .sidebar {
+                position: static;
+            }
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <nav class="navbar navbar-expand-lg navbar-modern mb-4">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
                 <i class="bi bi-book-fill"></i> Portal Belajar LMS
@@ -59,11 +268,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <span class="nav-link text-white">
+                <div class="navbar-nav ms-auto align-items-center">
+                    <span class="nav-link">
                         <i class="bi bi-person-circle"></i> {{ user.username }} ({{ user.get_role_display }})
                     </span>
-                    <a class="nav-link btn btn-outline-light btn-sm ms-2" href="{% url 'logout' %}">
+                    <a class="btn btn-logout btn-sm ms-2" href="{% url 'logout' %}">
                         <i class="bi bi-box-arrow-right"></i> Logout
                     </a>
                 </div>
@@ -71,7 +280,7 @@
         </div>
     </nav>
 
-    <div class="container-fluid">
+    <div class="container-fluid page-shell">
         <div class="row">
             <!-- Sidebar -->
             <div class="col-lg-3 mb-4">
@@ -110,7 +319,7 @@
             </div>
 
             <!-- Main Content -->
-            <div class="col-lg-9">
+            <div class="col-lg-9 content-area">
                 {% if messages %}
                     {% for message in messages %}
                         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">

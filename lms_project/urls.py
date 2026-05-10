@@ -19,8 +19,10 @@ urlpatterns = [
     path('', account_views.dashboard, name='dashboard'),
     
     # Course URLs
+    path('course/create/', course_views.course_create, name='course_create'),
     path('course/<int:course_id>/', course_views.course_detail, name='course_detail'),
     path('course/<int:course_id>/materials/', course_views.course_materials, name='course_materials'),
+    path('course/<int:course_id>/edit/', course_views.course_edit, name='course_edit'),
     
     # Attendance URLs
     path('course/<int:course_id>/attendance/', attendance_views.attendance_list, name='attendance_list'),

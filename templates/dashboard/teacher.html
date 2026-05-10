@@ -3,51 +3,76 @@
 {% block title %}Dashboard Pengajar - LMS{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold">
-            <i class="bi bi-graph-up"></i> Dashboard Pengajar
-        </h2>
-        <p class="text-muted">Kelola kelas dan pantau aktivitas mahasiswa Anda</p>
+<div class="page-header d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <span class="page-icon">
+            <i class="bi bi-easel2"></i>
+        </span>
+        <div>
+            <h2 class="page-title mb-1">Dashboard Pengajar</h2>
+            <p class="page-subtitle">Kelola kelas dan pantau aktivitas mahasiswa Anda.</p>
+        </div>
+    </div>
+    <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+        <span class="badge bg-info-subtle text-info align-self-center">Ringkasan kelas hari ini</span>
+        <a href="{% url 'course_create' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle"></i> Buat Kursus
+        </a>
     </div>
 </div>
 
 <!-- Quick Stats -->
 <div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <h6 class="card-title">Kelas Saya</h6>
-                <h3 class="mb-0">{{ my_courses.count }}</h3>
+    <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
+        <div class="stat-card stat-card--primary h-100">
+            <div>
+                <p class="stat-title">Kelas Saya</p>
+                <h3 class="stat-value">{{ my_courses.count }}</h3>
+                <small class="text-muted">Total kelas aktif</small>
             </div>
+            <span class="stat-icon">
+                <i class="bi bi-easel2"></i>
+            </span>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <h6 class="card-title">Total Materi</h6>
-                <h3 class="mb-0">
+    <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
+        <div class="stat-card stat-card--info h-100">
+            <div>
+                <p class="stat-title">Total Materi</p>
+                <h3 class="stat-value">
                     {% with total_materials=my_courses.values_list__materials__count %}
                         {{ my_courses|dictsort:"materials__count"|length }}
                     {% endwith %}
                 </h3>
+                <small class="text-muted">Materi tersedia</small>
             </div>
+            <span class="stat-icon">
+                <i class="bi bi-file-earmark-text"></i>
+            </span>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-warning text-dark">
-            <div class="card-body">
-                <h6 class="card-title">Total Tugas</h6>
-                <h3 class="mb-0">0</h3>
+    <div class="col-md-6 col-lg-3 mb-3 mb-lg-0">
+        <div class="stat-card stat-card--warning h-100">
+            <div>
+                <p class="stat-title">Total Tugas</p>
+                <h3 class="stat-value">0</h3>
+                <small class="text-muted">Tugas aktif</small>
             </div>
+            <span class="stat-icon">
+                <i class="bi bi-pencil-square"></i>
+            </span>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-danger text-white">
-            <div class="card-body">
-                <h6 class="card-title">Total Kuis</h6>
-                <h3 class="mb-0">0</h3>
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card stat-card--danger h-100">
+            <div>
+                <p class="stat-title">Total Kuis</p>
+                <h3 class="stat-value">0</h3>
+                <small class="text-muted">Kuis berjalan</small>
             </div>
+            <span class="stat-icon">
+                <i class="bi bi-ui-checks"></i>
+            </span>
         </div>
     </div>
 </div>
@@ -55,8 +80,8 @@
 <!-- Kelas Saya -->
 <div class="row">
     <div class="col-12 mb-3">
-        <h4 class="fw-bold">
-            <i class="bi bi-book-fill"></i> Kelas Saya
+        <h4 class="section-title d-flex align-items-center gap-2">
+            <i class="bi bi-book-fill text-primary"></i> Kelas Saya
         </h4>
     </div>
 
@@ -72,23 +97,23 @@
                 <!-- Stats -->
                 <div class="row text-center mb-3 small">
                     <div class="col-6">
-                        <small class="badge bg-info">{{ course.materials.count }} Materi</small>
+                        <small class="badge bg-info-subtle text-info">{{ course.materials.count }} Materi</small>
                     </div>
                     <div class="col-6">
-                        <small class="badge bg-warning">{{ course.assignments.count }} Tugas</small>
+                        <small class="badge bg-warning-subtle text-warning">{{ course.assignments.count }} Tugas</small>
                     </div>
                     <div class="col-6 mt-2">
-                        <small class="badge bg-danger">{{ course.quizzes.count }} Kuis</small>
+                        <small class="badge bg-danger-subtle text-danger">{{ course.quizzes.count }} Kuis</small>
                     </div>
                     <div class="col-6 mt-2">
-                        <small class="badge bg-success">{{ course.threads.count }} Diskusi</small>
+                        <small class="badge bg-success-subtle text-success">{{ course.threads.count }} Diskusi</small>
                     </div>
                 </div>
 
                 <!-- Presensi & Submissions -->
                 <div class="row text-center mb-3 small">
                     <div class="col-12">
-                        <small class="badge bg-primary">{{ course.attendance_sessions.count }} Sesi Presensi</small>
+                        <small class="badge bg-primary-subtle text-primary">{{ course.attendance_sessions.count }} Sesi Presensi</small>
                     </div>
                 </div>
             </div>
@@ -97,7 +122,7 @@
                     <a href="{% url 'course_detail' course.id %}" class="btn btn-sm btn-outline-primary" title="Lihat Kursus">
                         <i class="bi bi-eye"></i> Lihat
                     </a>
-                    <a href="/admin/courses/course/{{ course.id }}/change/" class="btn btn-sm btn-outline-warning" target="_blank" title="Edit Kursus">
+                    <a href="{% url 'course_edit' course.id %}" class="btn btn-sm btn-outline-warning" title="Edit Kursus">
                         <i class="bi bi-pencil"></i> Edit
                     </a>
                 </div>
