@@ -17,6 +17,11 @@
             --lms-success: #16a34a;
             --lms-warning: #f59e0b;
             --lms-danger: #ef4444;
+            --lms-primary-tint: rgba(79, 70, 229, 0.18);
+            --lms-secondary-tint: rgba(14, 165, 233, 0.18);
+            --lms-success-tint: rgba(22, 163, 74, 0.18);
+            --lms-warning-tint: rgba(245, 158, 11, 0.22);
+            --lms-danger-tint: rgba(239, 68, 68, 0.18);
             --lms-bg: #f4f7fe;
             --lms-surface: #ffffff;
             --lms-surface-alt: #f8fafc;
@@ -36,8 +41,7 @@
         }
 
         .navbar-modern {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(14px);
+            background: #ffffff;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
         }
 
@@ -191,27 +195,27 @@
         }
 
         .stat-card--primary .stat-icon {
-            background: rgba(79, 70, 229, 0.18);
+            background: var(--lms-primary-tint);
             color: var(--lms-primary);
         }
 
         .stat-card--info .stat-icon {
-            background: rgba(14, 165, 233, 0.18);
+            background: var(--lms-secondary-tint);
             color: var(--lms-secondary);
         }
 
         .stat-card--success .stat-icon {
-            background: rgba(22, 163, 74, 0.18);
+            background: var(--lms-success-tint);
             color: var(--lms-success);
         }
 
         .stat-card--warning .stat-icon {
-            background: rgba(245, 158, 11, 0.22);
+            background: var(--lms-warning-tint);
             color: var(--lms-warning);
         }
 
         .stat-card--danger .stat-icon {
-            background: rgba(239, 68, 68, 0.18);
+            background: var(--lms-danger-tint);
             color: var(--lms-danger);
         }
 
