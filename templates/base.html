@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --lms-primary: #4f46e5;
@@ -17,30 +17,53 @@
             --lms-success: #16a34a;
             --lms-warning: #f59e0b;
             --lms-danger: #ef4444;
-            --lms-bg: #f1f5f9;
+            --lms-bg: #f4f7fe;
             --lms-surface: #ffffff;
-            --lms-surface-alt: #f3f6fb;
+            --lms-surface-alt: #f8fafc;
             --lms-border: #e2e8f0;
             --lms-text: #1f2937;
-            --lms-muted: #4b5563;
-            --lms-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
-            --lms-shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.08);
+            --lms-muted: #64748b;
+            --lms-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            --lms-shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.06);
         }
 
         body {
             background-color: var(--lms-bg);
             color: var(--lms-text);
-            font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .navbar {
-            background: linear-gradient(90deg, #1e3a8a 0%, #1d4ed8 100%);
-            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2);
+        .navbar-modern {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
         }
 
-        .navbar .navbar-brand,
-        .navbar .nav-link {
-            letter-spacing: 0.2px;
+        .navbar-modern .navbar-brand,
+        .navbar-modern .nav-link {
+            color: var(--lms-text);
+            font-weight: 600;
+        }
+
+        .navbar-modern .nav-link:hover,
+        .navbar-modern .nav-link:focus {
+            color: var(--lms-primary);
+        }
+
+        .navbar-modern .navbar-toggler {
+            border: none;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.12);
+            color: #dc2626;
+            border: none;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #b91c1c;
         }
 
         .page-shell {
@@ -50,34 +73,44 @@
         .sidebar {
             background-color: var(--lms-surface);
             border-radius: 16px;
-            border: 1px solid var(--lms-border);
             box-shadow: var(--lms-shadow-sm);
             position: sticky;
             top: 80px;
         }
 
         .sidebar .nav-link {
-            color: var(--lms-text);
-            border-left: 3px solid transparent;
-            border-radius: 10px;
-            padding: 0.5rem 0.75rem;
+            color: var(--lms-muted);
+            border-radius: 12px;
+            padding: 0.55rem 0.85rem;
             margin-bottom: 0.5rem;
             transition: all 0.2s ease;
         }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background-color: var(--lms-primary-soft);
-            border-left-color: var(--lms-primary);
+
+        .sidebar .nav-link:hover {
+            background-color: #f1f5f9;
             color: var(--lms-primary);
         }
+
+        .sidebar .nav-link.active {
+            background-color: var(--lms-primary);
+            color: #fff;
+            border-radius: 50rem;
+        }
+
+        .sidebar .nav-link.active i {
+            color: #fff;
+        }
+
         .card {
-            border: 1px solid var(--lms-border);
+            border: none !important;
             border-radius: 16px;
-            box-shadow: var(--lms-shadow-sm);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: var(--lms-shadow);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         }
 
         .card-header {
@@ -89,14 +122,12 @@
             background: var(--lms-surface);
             border-radius: 20px;
             padding: 24px;
-            border: 1px solid var(--lms-border);
             box-shadow: var(--lms-shadow);
         }
 
         .page-header {
             background: var(--lms-surface);
             border-radius: 18px;
-            border: 1px solid var(--lms-border);
             box-shadow: var(--lms-shadow-sm);
             padding: 24px;
         }
@@ -126,7 +157,6 @@
         .stat-card {
             background: var(--lms-surface);
             border-radius: 16px;
-            border: 1px solid var(--lms-border);
             padding: 20px;
             display: flex;
             align-items: center;
@@ -161,31 +191,26 @@
 
         .stat-card--primary .stat-icon {
             background: rgba(79, 70, 229, 0.18);
-            background: color-mix(in srgb, var(--lms-primary) 18%, white);
             color: var(--lms-primary);
         }
 
         .stat-card--info .stat-icon {
             background: rgba(14, 165, 233, 0.18);
-            background: color-mix(in srgb, var(--lms-secondary) 18%, white);
             color: var(--lms-secondary);
         }
 
         .stat-card--success .stat-icon {
             background: rgba(22, 163, 74, 0.18);
-            background: color-mix(in srgb, var(--lms-success) 18%, white);
             color: var(--lms-success);
         }
 
         .stat-card--warning .stat-icon {
             background: rgba(245, 158, 11, 0.22);
-            background: color-mix(in srgb, var(--lms-warning) 22%, white);
             color: var(--lms-warning);
         }
 
         .stat-card--danger .stat-icon {
             background: rgba(239, 68, 68, 0.18);
-            background: color-mix(in srgb, var(--lms-danger) 18%, white);
             color: var(--lms-danger);
         }
 
@@ -196,17 +221,19 @@
 
         .info-card {
             background: var(--lms-surface-alt);
-            border: 1px dashed var(--lms-border);
             border-radius: 16px;
             box-shadow: none;
         }
 
-        .btn-custom {
-            border-radius: 6px;
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
         }
-        .badge-custom {
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
+
+        .badge {
+            padding: 0.45rem 0.8rem;
+            border-radius: 50rem;
+            font-weight: 600;
         }
 
         footer {
@@ -227,7 +254,7 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <nav class="navbar navbar-expand-lg navbar-modern mb-4">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
                 <i class="bi bi-book-fill"></i> Portal Belajar LMS
@@ -236,11 +263,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <span class="nav-link text-white">
+                <div class="navbar-nav ms-auto align-items-center">
+                    <span class="nav-link">
                         <i class="bi bi-person-circle"></i> {{ user.username }} ({{ user.get_role_display }})
                     </span>
-                    <a class="nav-link btn btn-outline-light btn-sm ms-2" href="{% url 'logout' %}">
+                    <a class="btn btn-logout btn-sm ms-2" href="{% url 'logout' %}">
                         <i class="bi bi-box-arrow-right"></i> Logout
                     </a>
                 </div>
