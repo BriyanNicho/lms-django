@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} - LMS{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">
+            <i class="bi bi-book-fill"></i> {{ course.title }}
+        </h2>
+        <p class="text-muted">
+            <i class="bi bi-person"></i> Dosen: {{ course.teacher.get_full_name|default:course.teacher.username }}
+        </p>
+        <p>{{ course.description }}</p>
+    </div>
+</div>
+
+<!-- Course Stats -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-primary">{{ course.materials.count }}</h4>
+                <p class="small text-muted">Materi</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-warning">{{ course.assignments.count }}</h4>
+                <p class="small text-muted">Tugas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-danger">{{ course.quizzes.count }}</h4>
+                <p class="small text-muted">Kuis</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h4 class="text-success">{{ course.threads.count }}</h4>
+                <p class="small text-muted">Diskusi</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs untuk berbagai bagian kursus -->
+<div class="row">
+    <div class="col-12">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button" role="tab">
+                    <i class="bi bi-file-earmark-text"></i> Materi
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab">
+                    <i class="bi bi-pencil-square"></i> Tugas
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="quizzes-tab" data-bs-toggle="tab" data-bs-target="#quizzes" type="button" role="tab">
+                    <i class="bi bi-question-circle"></i> Kuis
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab">
+                    <i class="bi bi-check-circle"></i> Presensi
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="forum-tab" data-bs-toggle="tab" data-bs-target="#forum" type="button" role="tab">
+                    <i class="bi bi-chat-dots"></i> Diskusi
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-3">
+            <!-- Materi Tab -->
+            <div class="tab-pane fade show active" id="materials" role="tabpanel">
+                {% if materials %}
+                    <div class="list-group">
+                        {% for material in materials %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <i class="bi bi-file-earmark"></i> {{ material.title }}
+                                    </h6>
+                                    <p class="mb-1 small text-muted">
+                                        Tipe: <span class="badge bg-info">{{ material.get_material_type_display }}</span>
+                                    </p>
+                                </div>
+                                <div>
+                                    {% if material.content_url %}
+                                    <a href="{{ material.content_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-box-arrow-up-right"></i> Buka
+                                    </a>
+                                    {% endif %}
+                                    {% if material.file %}
+                                    <a href="{{ material.file.url }}" class="btn btn-sm btn-outline-success" download>
+                                        <i class="bi bi-download"></i> Download
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <small class="text-muted d-block mt-2">
+                                Ditambahkan: {{ material.created_at|date:"d M Y" }}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">Belum ada materi untuk kursus ini.</div>
+                {% endif %}
+            </div>
+
+            <!-- Tugas Tab -->
+            <div class="tab-pane fade" id="assignments" role="tabpanel">
+                {% if assignments %}
+                    <div class="list-group">
+                        {% for assignment in assignments %}
+                        <a href="{% url 'assignment_detail' assignment.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ assignment.title }}</h6>
+                                    <p class="mb-1 small">{{ assignment.description|truncatewords:20 }}</p>
+                                </div>
+                                <span class="badge bg-warning">Deadline: {{ assignment.due_date|date:"d M Y H:i" }}</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">Belum ada tugas untuk kursus ini.</div>
+                {% endif %}
+            </div>
+
+            <!-- Kuis Tab -->
+            <div class="tab-pane fade" id="quizzes" role="tabpanel">
+                {% if quizzes %}
+                    <div class="list-group">
+                        {% for quiz in quizzes %}
+                        <a href="{% url 'quiz_detail' quiz.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ quiz.title }}</h6>
+                                    <p class="mb-0 small text-muted">
+                                        Jumlah Soal: {{ quiz.questions.count }}
+                                    </p>
+                                </div>
+                                <span class="badge bg-danger">Deadline: {{ quiz.due_date|date:"d M Y H:i" }}</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">Belum ada kuis untuk kursus ini.</div>
+                {% endif %}
+            </div>
+
+            <!-- Presensi Tab -->
+            <div class="tab-pane fade" id="attendance" role="tabpanel">
+                {% if attendance_sessions %}
+                    <div class="list-group">
+                        {% for session in attendance_sessions %}
+                        <a href="{% url 'attendance_detail' session.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">Sesi {{ session.session_date|date:"d M Y" }}</h6>
+                                    <p class="mb-0 small text-muted">
+                                        Jam: {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}
+                                    </p>
+                                </div>
+                                {% if session.is_active %}
+                                    <span class="badge bg-success">Aktif</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Selesai</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">Belum ada sesi presensi untuk kursus ini.</div>
+                {% endif %}
+            </div>
+
+            <!-- Diskusi Tab -->
+            <div class="tab-pane fade" id="forum" role="tabpanel">
+                {% if threads %}
+                    <div class="list-group">
+                        {% for thread in threads %}
+                        <a href="{% url 'thread_detail' thread.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ thread.title }}</h6>
+                                    <p class="mb-1 small">{{ thread.content|truncatewords:20 }}</p>
+                                    <small class="text-muted">
+                                        oleh <strong>{{ thread.author.username }}</strong> - {{ thread.created_at|date:"d M Y H:i" }}
+                                    </small>
+                                </div>
+                                <span class="badge bg-info">{{ thread.replies.count }} Balasan</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'forum_list' course.id %}" class="btn btn-primary mt-3">
+                        <i class="bi bi-chat-dots"></i> Buka Forum Lengkap
+                    </a>
+                {% else %}
+                    <div class="alert alert-info">Belum ada diskusi untuk kursus ini.</div>
+                    <a href="{% url 'forum_list' course.id %}" class="btn btn-primary">
+                        <i class="bi bi-chat-dots"></i> Mulai Diskusi
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

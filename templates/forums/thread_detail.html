@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ thread.title }} - Forum - LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reply-card {
+        border-left: 3px solid #e9ecef;
+        margin-bottom: 15px;
+    }
+    .reply-card:hover {
+        border-left-color: #0d6efd;
+    }
+    .author-badge {
+        display: inline-block;
+        background-color: #e9ecef;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">
+            <i class="bi bi-chat-left-text"></i> {{ thread.title }}
+        </h2>
+        <p class="text-muted">
+            Forum Diskusi - {{ thread.course.title }}
+        </p>
+    </div>
+</div>
+
+<!-- Thread Content -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <strong>{{ thread.author.get_full_name|default:thread.author.username }}</strong>
+                <span class="author-badge">Penulis Topik</span>
+                <p class="small text-muted mb-0">
+                    <i class="bi bi-calendar"></i> {{ thread.created_at|date:"d M Y H:i" }}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {{ thread.content }}
+    </div>
+</div>
+
+<!-- Replies Section -->
+<div class="mb-4">
+    <h5 class="fw-bold mb-3">
+        <i class="bi bi-chat-dots"></i> Balasan ({{ reply_count }})
+    </h5>
+    
+    {% if replies %}
+        {% for reply in replies %}
+        <div class="card reply-card">
+            <div class="card-header bg-light">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>{{ reply.author.get_full_name|default:reply.author.username }}</strong>
+                        <p class="small text-muted mb-0">
+                            <i class="bi bi-calendar"></i> {{ reply.created_at|date:"d M Y H:i" }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>{{ reply.content }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Belum ada balasan. Jadilah yang pertama memberikan balasan!
+        </div>
+    {% endif %}
+</div>
+
+<!-- Reply Form -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h6 class="mb-0">
+            <i class="bi bi-pencil-square"></i> Berikan Balasan
+        </h6>
+    </div>
+    <div class="card-body">
+        <form id="replyForm">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="replyContent" class="form-label">Isi Balasan:</label>
+                <textarea class="form-control" id="replyContent" name="content" rows="4" required placeholder="Tulis balasan Anda di sini..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" id="replyBtn">
+                <i class="bi bi-send"></i> Kirim Balasan
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Navigation -->
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'forum_list' thread.course.id %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali ke Forum
+        </a>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.getElementById('replyForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const replyContent = document.getElementById('replyContent');
+    const replyBtn = document.getElementById('replyBtn');
+    
+    if (!replyContent.value.trim()) {
+        alert('Isi balasan tidak boleh kosong');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('content', replyContent.value);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+    replyBtn.disabled = true;
+    replyBtn.innerHTML = '<i class="bi bi-hourglass"></i> Mengirim...';
+
+    fetch('{% url "create_reply" thread.id %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Gagal: ' + (data.error || 'Kesalahan tidak diketahui'));
+            replyBtn.disabled = false;
+            replyBtn.innerHTML = '<i class="bi bi-send"></i> Kirim Balasan';
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+        replyBtn.disabled = false;
+        replyBtn.innerHTML = '<i class="bi bi-send"></i> Kirim Balasan';
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

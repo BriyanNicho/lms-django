@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Forum Diskusi - LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .thread-card {
+        border-left: 4px solid #0d6efd;
+    }
+    .thread-card:hover {
+        border-left-color: #0a58ca;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold">
+            <i class="bi bi-chat-dots"></i> Forum Diskusi
+        </h2>
+        <p class="text-muted">{{ course.title }}</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createThreadModal">
+            <i class="bi bi-plus-circle"></i> Buat Topik Baru
+        </button>
+    </div>
+</div>
+
+{% if threads %}
+<div class="row">
+    {% for thread in threads %}
+    <div class="col-12 mb-3">
+        <a href="{% url 'thread_detail' thread.id %}" class="text-decoration-none">
+            <div class="card thread-card h-100">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-chat-left-text"></i> {{ thread.title }}
+                    </h6>
+                    <p class="card-text small">{{ thread.content|truncatewords:30 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="bi bi-person"></i> {{ thread.author.username }} | 
+                            <i class="bi bi-calendar"></i> {{ thread.created_at|date:"d M Y H:i" }}
+                        </small>
+                        <span class="badge bg-info">{{ thread.replies.count }} Balasan</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> Belum ada topik diskusi. Jadilah yang pertama membuat topik!
+    <button class="btn btn-sm btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#createThreadModal">
+        <i class="bi bi-plus-circle"></i> Buat Topik
+    </button>
+</div>
+{% endif %}
+
+<!-- Modal Buat Topik Baru -->
+<div class="modal fade" id="createThreadModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Buat Topik Diskusi Baru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createThreadForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="threadTitle" class="form-label">Judul Topik</label>
+                        <input type="text" class="form-control" id="threadTitle" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="threadContent" class="form-label">Isi Topik</label>
+                        <textarea class="form-control" id="threadContent" name="content" rows="5" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary" form="createThreadForm" id="createThreadBtn">
+                    <i class="bi bi-plus-circle"></i> Buat Topik
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali ke Detail Kursus
+        </a>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.getElementById('createThreadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const createThreadBtn = document.getElementById('createThreadBtn');
+    createThreadBtn.disabled = true;
+    createThreadBtn.innerHTML = '<i class="bi bi-hourglass"></i> Membuat...';
+
+    const formData = new FormData(this);
+
+    fetch('{% url "create_thread" course.id %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.redirect_url;
+        } else {
+            alert('Gagal: ' + (data.error || 'Kesalahan tidak diketahui'));
+            createThreadBtn.disabled = false;
+            createThreadBtn.innerHTML = '<i class="bi bi-plus-circle"></i> Buat Topik';
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+        createThreadBtn.disabled = false;
+        createThreadBtn.innerHTML = '<i class="bi bi-plus-circle"></i> Buat Topik';
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

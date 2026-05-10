@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail Presensi - LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .attendance-status {
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .attendance-status.present {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .attendance-status.not-present {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">
+            <i class="bi bi-check-circle"></i> Detail Sesi Presensi
+        </h2>
+        <p class="text-muted">
+            {{ session.course.title }} - {{ session.session_date|date:"d M Y" }}
+        </p>
+    </div>
+</div>
+
+<!-- Session Info -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h6 class="mb-0">Informasi Sesi</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p>
+                    <strong>Tanggal:</strong> {{ session.session_date|date:"d M Y" }}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p>
+                    <strong>Waktu:</strong> {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}
+                </p>
+            </div>
+        </div>
+        <p>
+            <strong>Status:</strong>
+            {% if session.is_active %}
+                <span class="badge bg-success">Sesi Aktif</span>
+            {% else %}
+                <span class="badge bg-secondary">Sesi Selesai</span>
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<!-- Attendance Status -->
+{% if user_attendance %}
+<div class="attendance-status present">
+    <h5 class="mb-2">
+        <i class="bi bi-check-circle-fill"></i> Anda Sudah Presensi
+    </h5>
+    <p class="mb-2">
+        Status: <strong>{{ user_attendance.get_status_display }}</strong>
+    </p>
+    <p class="mb-0 small">
+        Waktu Presensi: {{ user_attendance.timestamp|date:"d M Y H:i:s" }}
+    </p>
+</div>
+{% elif is_active %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-circle"></i> 
+    <strong>Belum Presensi</strong> - Gunakan tombol di bawah untuk melakukan presensi
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h6 class="mb-0">Form Presensi</h6>
+    </div>
+    <div class="card-body">
+        <form id="attendanceForm">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="statusSelect" class="form-label">Pilih Status Presensi:</label>
+                <select class="form-select" id="statusSelect" name="status">
+                    <option value="PRESENT" selected>Hadir</option>
+                    <option value="LATE">Terlambat</option>
+                    <option value="ABSENT">Alpa</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success btn-lg w-100" id="submitBtn">
+                <i class="bi bi-check-circle"></i> Catat Presensi
+            </button>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="attendance-status not-present">
+    <h5 class="mb-2">
+        <i class="bi bi-clock-history"></i> Sesi Telah Selesai
+    </h5>
+    <p class="mb-0">Anda tidak dapat presensi karena sesi ini sudah ditutup.</p>
+</div>
+{% endif %}
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'attendance_list' session.course.id %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali ke Daftar Presensi
+        </a>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+{% if is_active and not user_attendance %}
+document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const statusSelect = document.getElementById('statusSelect');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    const formData = new FormData();
+    formData.append('status', statusSelect.value);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="bi bi-hourglass"></i> Mengirim...';
+
+    fetch('{% url "mark_attendance" session.id %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Gagal: ' + (data.error || 'Kesalahan tidak diketahui'));
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Catat Presensi';
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Catat Presensi';
+    });
+});
+{% endif %}
+</script>
+{% endblock %}
+{% endblock %}

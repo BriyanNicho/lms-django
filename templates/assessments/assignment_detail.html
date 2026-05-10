@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ assignment.title }} - LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .submission-status {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">
+            <i class="bi bi-pencil-square"></i> {{ assignment.title }}
+        </h2>
+    </div>
+</div>
+
+<!-- Status Submission -->
+{% if user_submission %}
+<div class="alert alert-success submission-status">
+    <h6 class="mb-2">
+        <i class="bi bi-check-circle"></i> Status Pengumpulan
+    </h6>
+    <p class="mb-0">
+        <strong>Anda sudah mengumpulkan tugas ini</strong><br>
+        <small class="text-muted">
+            Waktu pengumpulan: {{ user_submission.submitted_at|date:"d M Y H:i" }}
+        </small>
+    </p>
+    {% if user_submission.grade %}
+    <hr>
+    <p class="mb-0">
+        <strong>Nilai:</strong> <span class="badge bg-info">{{ user_submission.grade }}</span>
+    </p>
+    {% endif %}
+    {% if user_submission.feedback %}
+    <hr>
+    <p class="mb-0">
+        <strong>Feedback:</strong><br>
+        <small>{{ user_submission.feedback }}</small>
+    </p>
+    {% endif %}
+</div>
+{% elif is_overdue %}
+<div class="alert alert-danger submission-status">
+    <h6 class="mb-2">
+        <i class="bi bi-exclamation-triangle"></i> Tugas Telah Melewati Deadline
+    </h6>
+    <p class="mb-0">Batas waktu pengumpulan: {{ assignment.due_date|date:"d M Y H:i" }}</p>
+</div>
+{% else %}
+<div class="alert alert-info submission-status">
+    <h6 class="mb-2">
+        <i class="bi bi-info-circle"></i> Status
+    </h6>
+    <p class="mb-0">
+        <strong>Belum dikumpulkan</strong><br>
+        <small class="text-muted">
+            Deadline: {{ assignment.due_date|date:"d M Y H:i" }}
+        </small>
+    </p>
+</div>
+{% endif %}
+
+<!-- Deskripsi Tugas -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h6 class="mb-0">Deskripsi Tugas</h6>
+    </div>
+    <div class="card-body">
+        {{ assignment.description }}
+    </div>
+</div>
+
+<!-- Form Submit Tugas -->
+{% if not user_submission or not is_overdue %}
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h6 class="mb-0">
+            {% if user_submission %}
+            <i class="bi bi-pencil"></i> Perbarui Pengumpulan
+            {% else %}
+            <i class="bi bi-upload"></i> Kumpulkan Tugas
+            {% endif %}
+        </h6>
+    </div>
+    <div class="card-body">
+        <form id="submissionForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="fileInput" class="form-label">Pilih File</label>
+                <input type="file" class="form-control" id="fileInput" name="file" required accept=".pdf,.doc,.docx,.txt,.zip,.rar">
+                <small class="form-text text-muted">
+                    Format yang didukung: PDF, DOC, DOCX, TXT, ZIP, RAR
+                </small>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="bi bi-check-circle"></i>
+                    {% if user_submission %}
+                    Perbarui Pengumpulan
+                    {% else %}
+                    Kumpulkan Sekarang
+                    {% endif %}
+                </button>
+                <a href="{% url 'course_detail' assignment.course.id %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <a href="{% url 'course_detail' assignment.course.id %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali ke Detail Kursus
+        </a>
+    </div>
+</div>
+{% endif %}
+
+{% block extra_js %}
+<script>
+document.getElementById('submissionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const fileInput = document.getElementById('fileInput');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!fileInput.files.length) {
+        alert('Pilih file terlebih dahulu');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="bi bi-hourglass"></i> Mengirim...';
+
+    fetch('{% url "submit_assignment" assignment.id %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Gagal: ' + (data.error || 'Kesalahan tidak diketahui'));
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '{% if user_submission %}<i class="bi bi-pencil"></i> Perbarui Pengumpulan{% else %}<i class="bi bi-upload"></i> Kumpulkan Sekarang{% endif %}';
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '{% if user_submission %}<i class="bi bi-pencil"></i> Perbarui Pengumpulan{% else %}<i class="bi bi-upload"></i> Kumpulkan Sekarang{% endif %}';
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }} - LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    .question-card {
+        border-left: 4px solid #0d6efd;
+        margin-bottom: 20px;
+    }
+    .option-label {
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 6px;
+        transition: all 0.3s;
+    }
+    .option-label:hover {
+        background-color: #f0f0f0;
+    }
+    .option-label input[type="radio"] {
+        margin-right: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">
+            <i class="bi bi-question-circle"></i> {{ quiz.title }}
+        </h2>
+        <p class="text-muted">
+            <i class="bi bi-pencil-square"></i> Total: {{ question_count }} Soal |
+            <i class="bi bi-calendar"></i> Deadline: {{ quiz.due_date|date:"d M Y H:i" }}
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            <strong>Petunjuk:</strong> Pilih jawaban yang paling tepat untuk setiap pertanyaan di bawah ini.
+        </div>
+
+        <form id="quizForm">
+            {% csrf_token %}
+            
+            {% for question in questions %}
+            <div class="card question-card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        Soal {{ forloop.counter }} dari {{ question_count }}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-4"><strong>{{ question.text }}</strong></p>
+                    
+                    <div class="mb-3">
+                        <label class="option-label">
+                            <input type="radio" name="question_{{ question.id }}" value="A" required>
+                            <strong>A.</strong> {{ question.option_a }}
+                        </label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="option-label">
+                            <input type="radio" name="question_{{ question.id }}" value="B">
+                            <strong>B.</strong> {{ question.option_b }}
+                        </label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="option-label">
+                            <input type="radio" name="question_{{ question.id }}" value="C">
+                            <strong>C.</strong> {{ question.option_c }}
+                        </label>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="option-label">
+                            <input type="radio" name="question_{{ question.id }}" value="D">
+                            <strong>D.</strong> {{ question.option_d }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success btn-lg w-100" id="submitBtn">
+                        <i class="bi bi-check-circle"></i> Serahkan Jawaban
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'quiz_list' quiz.course.id %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali ke Daftar Kuis
+        </a>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.getElementById('quizForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="bi bi-hourglass"></i> Mengirim...';
+
+    // Kumpulkan semua jawaban
+    const formData = new FormData(this);
+    
+    // Dalam implementasi yang sebenarnya, Anda perlu membuat endpoint untuk menyimpan jawaban kuis
+    // Untuk saat ini, hanya tampilkan notifikasi
+    setTimeout(() => {
+        alert('Jawaban Anda telah dikirim. Terima kasih!');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Serahkan Jawaban';
+    }, 1000);
+});
+</script>
+{% endblock %}
+{% endblock %}
