@@ -3,224 +3,241 @@
 {% block title %}{{ course.title }} - LMS{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold">
-            <i class="bi bi-book-fill"></i> {{ course.title }}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold mb-1" style="color: var(--text-main);">
+            <i class="bi bi-book-fill text-primary"></i> Detail Kursus
         </h2>
-        <p class="text-muted">
-            <i class="bi bi-person"></i> Dosen: {{ course.teacher.get_full_name|default:course.teacher.username }}
-        </p>
-        <p>{{ course.description }}</p>
+        <p class="text-muted-custom mb-0">Informasi dan materi pembelajaran</p>
     </div>
 </div>
 
-<!-- Course Stats -->
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h4 class="text-primary">{{ course.materials.count }}</h4>
-                <p class="small text-muted">Materi</p>
-            </div>
+<div class="bento-grid">
+    <!-- Course Info (2x1) -->
+    <div class="card bento-item bento-2x1" style="background: linear-gradient(135deg, var(--primary-color) 0%, #8655ff 100%); color: white; border: none !important;">
+        <div class="card-body d-flex flex-column justify-content-center">
+            <h3 class="fw-bold mb-2">{{ course.title }}</h3>
+            <p class="mb-2 opacity-75">
+                <i class="bi bi-person-circle me-1"></i> Dosen: {{ course.teacher.get_full_name|default:course.teacher.username }}
+            </p>
+            <p class="mb-0 small opacity-75">{{ course.description }}</p>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h4 class="text-warning">{{ course.assignments.count }}</h4>
-                <p class="small text-muted">Tugas</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h4 class="text-danger">{{ course.quizzes.count }}</h4>
-                <p class="small text-muted">Kuis</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h4 class="text-success">{{ course.threads.count }}</h4>
-                <p class="small text-muted">Diskusi</p>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Tabs untuk berbagai bagian kursus -->
-<div class="row">
-    <div class="col-12">
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button" role="tab">
-                    <i class="bi bi-file-earmark-text"></i> Materi
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab">
-                    <i class="bi bi-pencil-square"></i> Tugas
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="quizzes-tab" data-bs-toggle="tab" data-bs-target="#quizzes" type="button" role="tab">
-                    <i class="bi bi-question-circle"></i> Kuis
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab">
-                    <i class="bi bi-check-circle"></i> Presensi
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="forum-tab" data-bs-toggle="tab" data-bs-target="#forum" type="button" role="tab">
-                    <i class="bi bi-chat-dots"></i> Diskusi
-                </button>
-            </li>
-        </ul>
+    <!-- Quick Stats (1x1) -->
+    <div class="card bento-item bento-1x1">
+        <div class="card-body d-flex flex-column justify-content-center">
+            <div class="row text-center h-100 align-items-center">
+                <div class="col-6 mb-3">
+                    <h3 class="fw-bold mb-0" style="color: var(--text-main);">{{ course.materials.count }}</h3>
+                    <small class="text-muted-custom">Materi</small>
+                </div>
+                <div class="col-6 mb-3">
+                    <h3 class="fw-bold mb-0" style="color: #ffab00;">{{ course.assignments.count }}</h3>
+                    <small class="text-muted-custom">Tugas</small>
+                </div>
+                <div class="col-6">
+                    <h3 class="fw-bold mb-0" style="color: var(--danger-color);">{{ course.quizzes.count }}</h3>
+                    <small class="text-muted-custom">Kuis</small>
+                </div>
+                <div class="col-6">
+                    <h3 class="fw-bold mb-0" style="color: var(--success-color);">{{ course.threads.count }}</h3>
+                    <small class="text-muted-custom">Diskusi</small>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div class="tab-content mt-3">
-            <!-- Materi Tab -->
-            <div class="tab-pane fade show active" id="materials" role="tabpanel">
-                {% if materials %}
-                    <div class="list-group">
-                        {% for material in materials %}
-                        <div class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">
-                                        <i class="bi bi-file-earmark"></i> {{ material.title }}
-                                    </h6>
-                                    <p class="mb-1 small text-muted">
-                                        Tipe: <span class="badge bg-info">{{ material.get_material_type_display }}</span>
-                                    </p>
+    <!-- Additional Quick Actions (1x1) -->
+    <div class="card bento-item bento-1x1 bg-white">
+        <div class="card-body d-flex flex-column justify-content-center text-center">
+            <div class="rounded-circle d-flex align-items-center justify-content-center mb-3 mx-auto" style="width: 56px; height: 56px; background-color: rgba(67, 24, 255, 0.1); color: var(--primary-color); font-size: 28px;">
+                <i class="bi bi-chat-dots-fill"></i>
+            </div>
+            <h6 class="fw-bold mb-2" style="color: var(--text-main);">Forum Diskusi</h6>
+            <a href="{% url 'forum_list' course.id %}" class="btn text-white rounded-pill px-4 mx-auto btn-sm" style="background-color: var(--primary-color);">Buka Forum</a>
+        </div>
+    </div>
+
+    <!-- Main Content Tabs (4x2 or flexible rows) -->
+    <div class="card bento-item bento-4x1" style="grid-row: span 2;">
+        <div class="card-body p-0">
+            <!-- Navigation -->
+            <ul class="nav nav-tabs px-4 pt-3 border-bottom-0" role="tablist" style="border-radius: 20px 20px 0 0; background-color: rgba(0,0,0,0.02);">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-medium px-4 py-3" id="materials-tab" data-bs-toggle="tab" data-bs-target="#materials" type="button" role="tab" style="border: none; border-bottom: 3px solid transparent; border-radius: 0; color: var(--text-muted);">
+                        <i class="bi bi-file-earmark-text me-1"></i> Materi
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-medium px-4 py-3" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab" style="border: none; border-bottom: 3px solid transparent; border-radius: 0; color: var(--text-muted);">
+                        <i class="bi bi-pencil-square me-1"></i> Tugas
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-medium px-4 py-3" id="quizzes-tab" data-bs-toggle="tab" data-bs-target="#quizzes" type="button" role="tab" style="border: none; border-bottom: 3px solid transparent; border-radius: 0; color: var(--text-muted);">
+                        <i class="bi bi-question-circle me-1"></i> Kuis
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-medium px-4 py-3" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button" role="tab" style="border: none; border-bottom: 3px solid transparent; border-radius: 0; color: var(--text-muted);">
+                        <i class="bi bi-check-circle me-1"></i> Presensi
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Active tab styling script will be needed or just simple CSS -->
+            <style>
+                .nav-tabs .nav-link.active {
+                    color: var(--primary-color) !important;
+                    background: transparent;
+                    border-bottom-color: var(--primary-color) !important;
+                }
+                .custom-list-item {
+                    border: 1px solid rgba(0,0,0,0.05);
+                    border-radius: 12px;
+                    margin-bottom: 10px;
+                    transition: all 0.2s;
+                }
+                .custom-list-item:hover {
+                    background-color: var(--bg-color);
+                    transform: translateX(5px);
+                }
+            </style>
+
+            <div class="tab-content p-4">
+                <!-- Materi Tab -->
+                <div class="tab-pane fade show active" id="materials" role="tabpanel">
+                    {% if materials %}
+                        <div class="d-flex flex-column">
+                            {% for material in materials %}
+                            <div class="custom-list-item p-3 d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background-color: rgba(67, 24, 255, 0.1); color: var(--primary-color);">
+                                        <i class="bi bi-file-earmark"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-bold" style="color: var(--text-main);">{{ material.title }}</h6>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge" style="background-color: rgba(0, 181, 255, 0.1); color: #00b5ff;">{{ material.get_material_type_display }}</span>
+                                            <small class="text-muted-custom">{{ material.created_at|date:"d M Y" }}</small>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
+                                <div class="d-flex gap-2">
                                     {% if material.content_url %}
-                                    <a href="{{ material.content_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <a href="{{ material.content_url }}" target="_blank" class="btn btn-sm rounded-pill text-white" style="background-color: var(--primary-color);">
                                         <i class="bi bi-box-arrow-up-right"></i> Buka
                                     </a>
                                     {% endif %}
                                     {% if material.file %}
-                                    <a href="{{ material.file.url }}" class="btn btn-sm btn-outline-success" download>
+                                    <a href="{{ material.file.url }}" class="btn btn-sm rounded-pill text-white" style="background-color: var(--success-color);" download>
                                         <i class="bi bi-download"></i> Download
                                     </a>
                                     {% endif %}
                                 </div>
                             </div>
-                            <small class="text-muted d-block mt-2">
-                                Ditambahkan: {{ material.created_at|date:"d M Y" }}
-                            </small>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="alert alert-info">Belum ada materi untuk kursus ini.</div>
-                {% endif %}
-            </div>
+                    {% else %}
+                        <div class="text-center text-muted-custom py-5">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Belum ada materi untuk kursus ini.
+                        </div>
+                    {% endif %}
+                </div>
 
-            <!-- Tugas Tab -->
-            <div class="tab-pane fade" id="assignments" role="tabpanel">
-                {% if assignments %}
-                    <div class="list-group">
-                        {% for assignment in assignments %}
-                        <a href="{% url 'assignment_detail' assignment.id %}" class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">{{ assignment.title }}</h6>
-                                    <p class="mb-1 small">{{ assignment.description|truncatewords:20 }}</p>
+                <!-- Tugas Tab -->
+                <div class="tab-pane fade" id="assignments" role="tabpanel">
+                    {% if assignments %}
+                        <div class="d-flex flex-column">
+                            {% for assignment in assignments %}
+                            <a href="{% url 'assignment_detail' assignment.id %}" class="custom-list-item p-3 text-decoration-none">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background-color: rgba(255, 171, 0, 0.1); color: #ffab00;">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold" style="color: var(--text-main);">{{ assignment.title }}</h6>
+                                            <p class="mb-0 small text-muted-custom">{{ assignment.description|truncatewords:15 }}</p>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Deadline: {{ assignment.due_date|date:"d M Y H:i" }}</span>
                                 </div>
-                                <span class="badge bg-warning">Deadline: {{ assignment.due_date|date:"d M Y H:i" }}</span>
-                            </div>
-                        </a>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="alert alert-info">Belum ada tugas untuk kursus ini.</div>
-                {% endif %}
-            </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted-custom py-5">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Belum ada tugas untuk kursus ini.
+                        </div>
+                    {% endif %}
+                </div>
 
-            <!-- Kuis Tab -->
-            <div class="tab-pane fade" id="quizzes" role="tabpanel">
-                {% if quizzes %}
-                    <div class="list-group">
-                        {% for quiz in quizzes %}
-                        <a href="{% url 'quiz_detail' quiz.id %}" class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">{{ quiz.title }}</h6>
-                                    <p class="mb-0 small text-muted">
-                                        Jumlah Soal: {{ quiz.questions.count }}
-                                    </p>
+                <!-- Kuis Tab -->
+                <div class="tab-pane fade" id="quizzes" role="tabpanel">
+                    {% if quizzes %}
+                        <div class="d-flex flex-column">
+                            {% for quiz in quizzes %}
+                            <a href="{% url 'quiz_detail' quiz.id %}" class="custom-list-item p-3 text-decoration-none">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background-color: rgba(238, 93, 80, 0.1); color: var(--danger-color);">
+                                            <i class="bi bi-question-circle"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold" style="color: var(--text-main);">{{ quiz.title }}</h6>
+                                            <p class="mb-0 small text-muted-custom">{{ quiz.questions.count }} Soal</p>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-danger px-3 py-2 rounded-pill">Deadline: {{ quiz.due_date|date:"d M Y H:i" }}</span>
                                 </div>
-                                <span class="badge bg-danger">Deadline: {{ quiz.due_date|date:"d M Y H:i" }}</span>
-                            </div>
-                        </a>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="alert alert-info">Belum ada kuis untuk kursus ini.</div>
-                {% endif %}
-            </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted-custom py-5">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Belum ada kuis untuk kursus ini.
+                        </div>
+                    {% endif %}
+                </div>
 
-            <!-- Presensi Tab -->
-            <div class="tab-pane fade" id="attendance" role="tabpanel">
-                {% if attendance_sessions %}
-                    <div class="list-group">
-                        {% for session in attendance_sessions %}
-                        <a href="{% url 'attendance_detail' session.id %}" class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">Sesi {{ session.session_date|date:"d M Y" }}</h6>
-                                    <p class="mb-0 small text-muted">
-                                        Jam: {{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}
-                                    </p>
+                <!-- Presensi Tab -->
+                <div class="tab-pane fade" id="attendance" role="tabpanel">
+                    {% if attendance_sessions %}
+                        <div class="d-flex flex-column">
+                            {% for session in attendance_sessions %}
+                            <a href="{% url 'attendance_detail' session.id %}" class="custom-list-item p-3 text-decoration-none">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background-color: rgba(5, 205, 153, 0.1); color: var(--success-color);">
+                                            <i class="bi bi-calendar-check"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold" style="color: var(--text-main);">Sesi {{ session.session_date|date:"d M Y" }}</h6>
+                                            <p class="mb-0 small text-muted-custom">{{ session.start_time|time:"H:i" }} - {{ session.end_time|time:"H:i" }}</p>
+                                        </div>
+                                    </div>
+                                    {% if session.is_active %}
+                                        <span class="badge bg-success px-3 py-2 rounded-pill">Aktif</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary px-3 py-2 rounded-pill">Selesai</span>
+                                    {% endif %}
                                 </div>
-                                {% if session.is_active %}
-                                    <span class="badge bg-success">Aktif</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">Selesai</span>
-                                {% endif %}
-                            </div>
-                        </a>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="alert alert-info">Belum ada sesi presensi untuk kursus ini.</div>
-                {% endif %}
-            </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted-custom py-5">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Belum ada sesi presensi untuk kursus ini.
+                        </div>
+                    {% endif %}
+                </div>
 
-            <!-- Diskusi Tab -->
-            <div class="tab-pane fade" id="forum" role="tabpanel">
-                {% if threads %}
-                    <div class="list-group">
-                        {% for thread in threads %}
-                        <a href="{% url 'thread_detail' thread.id %}" class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">{{ thread.title }}</h6>
-                                    <p class="mb-1 small">{{ thread.content|truncatewords:20 }}</p>
-                                    <small class="text-muted">
-                                        oleh <strong>{{ thread.author.username }}</strong> - {{ thread.created_at|date:"d M Y H:i" }}
-                                    </small>
-                                </div>
-                                <span class="badge bg-info">{{ thread.replies.count }} Balasan</span>
-                            </div>
-                        </a>
-                        {% endfor %}
-                    </div>
-                    <a href="{% url 'forum_list' course.id %}" class="btn btn-primary mt-3">
-                        <i class="bi bi-chat-dots"></i> Buka Forum Lengkap
-                    </a>
-                {% else %}
-                    <div class="alert alert-info">Belum ada diskusi untuk kursus ini.</div>
-                    <a href="{% url 'forum_list' course.id %}" class="btn btn-primary">
-                        <i class="bi bi-chat-dots"></i> Mulai Diskusi
-                    </a>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -228,7 +245,7 @@
 
 <div class="row mt-4">
     <div class="col-12">
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+        <a href="{% url 'dashboard' %}" class="btn rounded-pill px-4 text-muted-custom" style="background-color: white; border: 1px solid rgba(0,0,0,0.1);">
             <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
         </a>
     </div>

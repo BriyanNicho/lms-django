@@ -5,98 +5,117 @@
 {% block extra_css %}
 <style>
     .thread-card {
-        border-left: 4px solid #0d6efd;
+        border-left: 4px solid var(--primary-color) !important;
+        transition: all 0.2s ease;
+        border-radius: 12px;
+        background-color: white;
     }
     .thread-card:hover {
-        border-left-color: #0a58ca;
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-8">
-        <h2 class="fw-bold">
-            <i class="bi bi-chat-dots"></i> Forum Diskusi
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold mb-1" style="color: var(--text-main);">
+            <i class="bi bi-chat-dots-fill text-primary"></i> Forum Diskusi
         </h2>
-        <p class="text-muted">{{ course.title }}</p>
+        <p class="text-muted-custom mb-0">{{ course.title }}</p>
     </div>
-    <div class="col-md-4 text-end">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createThreadModal">
-            <i class="bi bi-plus-circle"></i> Buat Topik Baru
+    <div>
+        <button class="btn text-white rounded-pill px-4 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#createThreadModal" style="background-color: var(--primary-color);">
+            <i class="bi bi-plus-circle me-2"></i> Buat Topik Baru
         </button>
     </div>
 </div>
 
-{% if threads %}
-<div class="row">
-    {% for thread in threads %}
-    <div class="col-12 mb-3">
-        <a href="{% url 'thread_detail' thread.id %}" class="text-decoration-none">
-            <div class="card thread-card h-100">
-                <div class="card-body">
-                    <h6 class="card-title">
-                        <i class="bi bi-chat-left-text"></i> {{ thread.title }}
-                    </h6>
-                    <p class="card-text small">{{ thread.content|truncatewords:30 }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted">
-                            <i class="bi bi-person"></i> {{ thread.author.username }} | 
-                            <i class="bi bi-calendar"></i> {{ thread.created_at|date:"d M Y H:i" }}
-                        </small>
-                        <span class="badge bg-info">{{ thread.replies.count }} Balasan</span>
+<div class="bento-grid">
+    <!-- Threads List (4x1 / full width) -->
+    <div class="card bento-item bento-4x1" style="grid-row: span 2;">
+        <div class="card-header bg-white border-0 pt-4 pb-2">
+            <h6 class="fw-bold mb-0" style="color: var(--text-main);">
+                Daftar Topik Diskusi
+            </h6>
+        </div>
+        <div class="card-body p-4 pt-2 bg-light rounded-bottom" style="border-radius: 0 0 20px 20px;">
+            {% if threads %}
+            <div class="d-flex flex-column gap-3">
+                {% for thread in threads %}
+                <a href="{% url 'thread_detail' thread.id %}" class="text-decoration-none text-dark">
+                    <div class="card thread-card border-0">
+                        <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                            <div>
+                                <h6 class="fw-bold mb-2" style="color: var(--text-main);">
+                                    <i class="bi bi-chat-left-text me-2" style="color: var(--primary-color);"></i>{{ thread.title }}
+                                </h6>
+                                <p class="mb-2 text-muted-custom small">{{ thread.content|truncatewords:20 }}</p>
+                                <div class="d-flex align-items-center small text-muted-custom gap-3">
+                                    <span><i class="bi bi-person-circle me-1"></i> {{ thread.author.username }}</span>
+                                    <span><i class="bi bi-calendar me-1"></i> {{ thread.created_at|date:"d M Y H:i" }}</span>
+                                </div>
+                            </div>
+                            <div class="text-md-end shrink-0">
+                                <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(0, 181, 255, 0.1); color: #00b5ff;">
+                                    <i class="bi bi-chat-dots me-1"></i> {{ thread.replies.count }} Balasan
+                                </span>
+                            </div>
+                        </div>
                     </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; background-color: rgba(67, 24, 255, 0.1); color: var(--primary-color); font-size: 32px;">
+                    <i class="bi bi-chat-square-dots"></i>
                 </div>
-            </div>
-        </a>
-    </div>
-    {% endfor %}
-</div>
-{% else %}
-<div class="alert alert-info">
-    <i class="bi bi-info-circle"></i> Belum ada topik diskusi. Jadilah yang pertama membuat topik!
-    <button class="btn btn-sm btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#createThreadModal">
-        <i class="bi bi-plus-circle"></i> Buat Topik
-    </button>
-</div>
-{% endif %}
-
-<!-- Modal Buat Topik Baru -->
-<div class="modal fade" id="createThreadModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Buat Topik Diskusi Baru</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="createThreadForm">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="threadTitle" class="form-label">Judul Topik</label>
-                        <input type="text" class="form-control" id="threadTitle" name="title" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="threadContent" class="form-label">Isi Topik</label>
-                        <textarea class="form-control" id="threadContent" name="content" rows="5" required></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary" form="createThreadForm" id="createThreadBtn">
-                    <i class="bi bi-plus-circle"></i> Buat Topik
+                <h5 class="fw-bold text-dark mb-2">Belum Ada Diskusi</h5>
+                <p class="text-muted-custom mb-4">Jadilah yang pertama untuk memulai topik diskusi di kelas ini.</p>
+                <button class="btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#createThreadModal">
+                    <i class="bi bi-plus-circle me-2"></i> Buat Topik
                 </button>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
 
 <div class="row mt-4">
     <div class="col-12">
-        <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">
+        <a href="{% url 'course_detail' course.id %}" class="btn rounded-pill px-4 text-muted-custom" style="background-color: white; border: 1px solid rgba(0,0,0,0.1);">
             <i class="bi bi-arrow-left"></i> Kembali ke Detail Kursus
         </a>
+    </div>
+</div>
+
+<!-- Modal Buat Topik Baru -->
+<div class="modal fade" id="createThreadModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0" style="color: var(--text-main);">Buat Topik Baru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="createThreadForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="threadTitle" class="form-label small text-muted-custom fw-medium">Judul Topik</label>
+                        <input type="text" class="form-control" id="threadTitle" name="title" required style="border-radius: 12px; padding: 10px 15px;">
+                    </div>
+                    <div class="mb-4">
+                        <label for="threadContent" class="form-label small text-muted-custom fw-medium">Isi Diskusi</label>
+                        <textarea class="form-control" id="threadContent" name="content" rows="5" required style="border-radius: 12px; padding: 10px 15px; resize: none;"></textarea>
+                    </div>
+                    <button type="submit" class="btn text-white w-100 rounded-pill py-2" id="createThreadBtn" style="background-color: var(--primary-color);">
+                        <i class="bi bi-send me-2"></i> Posting Topik
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -107,7 +126,7 @@ document.getElementById('createThreadForm').addEventListener('submit', function(
     
     const createThreadBtn = document.getElementById('createThreadBtn');
     createThreadBtn.disabled = true;
-    createThreadBtn.innerHTML = '<i class="bi bi-hourglass"></i> Membuat...';
+    createThreadBtn.innerHTML = '<i class="bi bi-hourglass me-2"></i> Memproses...';
 
     const formData = new FormData(this);
 
@@ -122,13 +141,13 @@ document.getElementById('createThreadForm').addEventListener('submit', function(
         } else {
             alert('Gagal: ' + (data.error || 'Kesalahan tidak diketahui'));
             createThreadBtn.disabled = false;
-            createThreadBtn.innerHTML = '<i class="bi bi-plus-circle"></i> Buat Topik';
+            createThreadBtn.innerHTML = '<i class="bi bi-send me-2"></i> Posting Topik';
         }
     })
     .catch(error => {
         alert('Error: ' + error);
         createThreadBtn.disabled = false;
-        createThreadBtn.innerHTML = '<i class="bi bi-plus-circle"></i> Buat Topik';
+        createThreadBtn.innerHTML = '<i class="bi bi-send me-2"></i> Posting Topik';
     });
 });
 </script>

@@ -3,120 +3,123 @@
 {% block title %}Dashboard Mahasiswa - LMS{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold">
-            <i class="bi bi-graph-up"></i> Dashboard Mahasiswa
+<!-- Header & Search Frame -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold mb-1" style="color: var(--text-main);">
+            Dashboard Mahasiswa
         </h2>
-        <p class="text-muted">Selamat datang di Portal Belajar. Pilih kursus untuk mulai belajar.</p>
+        <p class="text-muted-custom mb-0">Selamat datang di Portal Belajar. Pilih kursus untuk mulai belajar.</p>
+    </div>
+    <div class="search-frame">
+        <i class="bi bi-search text-muted-custom"></i>
+        <input type="text" placeholder="Cari kursus atau materi...">
     </div>
 </div>
 
-<!-- Quick Stats -->
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <h6 class="card-title">Total Kursus</h6>
-                <h3 class="mb-0">{{ available_courses.count }}</h3>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Daftar Kursus -->
-<div class="row" id="kursus">
-    <div class="col-12 mb-3">
-        <h4 class="fw-bold">
-            <i class="bi bi-book-fill"></i> Kursus Tersedia
-        </h4>
-    </div>
-
-    {% for course in available_courses %}
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-header bg-light">
-                <h6 class="mb-0 text-primary">{{ course.title }}</h6>
-            </div>
-            <div class="card-body">
-                <p class="card-text small text-muted">
-                    <i class="bi bi-person"></i> Dosen: {{ course.teacher.get_full_name|default:course.teacher.username }}
-                </p>
-                <p class="card-text">{{ course.description|truncatewords:20 }}</p>
-                
-                <!-- Course Stats -->
-                <div class="row text-center mb-3 small">
-                    <div class="col-6">
-                        <small class="badge bg-info">{{ course.materials.count }} Materi</small>
-                    </div>
-                    <div class="col-6">
-                        <small class="badge bg-warning">{{ course.assignments.count }} Tugas</small>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <small class="badge bg-danger">{{ course.quizzes.count }} Kuis</small>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <small class="badge bg-success">{{ course.threads.count }} Diskusi</small>
-                    </div>
+<div class="bento-grid">
+    <!-- Stat 1: Total Kursus (1x1) -->
+    <div class="card bento-item bento-1x1">
+        <div class="card-body d-flex flex-column justify-content-center">
+            <div class="d-flex align-items-center mb-3">
+                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background-color: rgba(67, 24, 255, 0.1); color: var(--primary-color); font-size: 24px;">
+                    <i class="bi bi-journal-bookmark"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted-custom mb-0" style="font-size: 0.875rem;">Total Kursus</h6>
+                    <h3 class="mb-0 fw-bold" style="color: var(--text-main);">{{ available_courses.count }}</h3>
                 </div>
             </div>
-            <div class="card-footer bg-white">
-                <div class="btn-group w-100" role="group">
-                    <a href="{% url 'course_detail' course.id %}" class="btn btn-sm btn-outline-primary" title="Detail Kursus">
-                        <i class="bi bi-eye"></i> Detail
-                    </a>
-                    <a href="{% url 'course_materials' course.id %}" class="btn btn-sm btn-outline-info" title="Materi">
-                        <i class="bi bi-file-earmark-text"></i> Materi
-                    </a>
-                    <a href="{% url 'assignment_list' course.id %}" class="btn btn-sm btn-outline-warning" title="Tugas">
-                        <i class="bi bi-pencil-square"></i> Tugas
+            <p class="small text-muted-custom mb-0">Kursus aktif saat ini</p>
+        </div>
+    </div>
+
+    <!-- Stat 2: Aktivitas (1x1) -->
+    <div class="card bento-item bento-1x1">
+        <div class="card-body d-flex flex-column justify-content-center">
+            <div class="d-flex align-items-center mb-3">
+                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background-color: rgba(5, 205, 153, 0.1); color: var(--success-color); font-size: 24px;">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted-custom mb-0" style="font-size: 0.875rem;">Progres</h6>
+                    <h3 class="mb-0 fw-bold" style="color: var(--text-main);">Aktif</h3>
+                </div>
+            </div>
+            <p class="small text-muted-custom mb-0">Status pembelajaran</p>
+        </div>
+    </div>
+
+    <!-- Kursus Tersedia (2x2) -->
+    <div class="card bento-item bento-2x2">
+        <div class="card-header bg-white border-0 pt-4 pb-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0" style="color: var(--text-main);">
+                    <i class="bi bi-book-fill me-2" style="color: var(--primary-color);"></i>Kursus Tersedia
+                </h5>
+                <a href="#kursus" class="small text-decoration-none" style="color: var(--primary-color);">Lihat Semua</a>
+            </div>
+        </div>
+        <div class="card-body overflow-auto" style="max-height: 400px;">
+            {% for course in available_courses %}
+            <div class="d-flex justify-content-between align-items-center mb-3 p-3 rounded" style="background-color: var(--bg-color);">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3 text-white" style="width: 45px; height: 45px; background-color: var(--primary-color);">
+                        <i class="bi bi-laptop"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 fw-bold" style="color: var(--text-main);">{{ course.title }}</h6>
+                        <small class="text-muted-custom d-block mb-1">
+                            <i class="bi bi-person me-1"></i>{{ course.teacher.get_full_name|default:course.teacher.username }}
+                        </small>
+                        <div class="d-flex gap-1">
+                            <span class="badge" style="background-color: rgba(67, 24, 255, 0.1); color: var(--primary-color);">{{ course.materials.count }} Materi</span>
+                            <span class="badge" style="background-color: rgba(5, 205, 153, 0.1); color: var(--success-color);">{{ course.assignments.count }} Tugas</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'course_detail' course.id %}" class="btn btn-sm text-white rounded-pill px-3" style="background-color: var(--primary-color);">
+                        Detail
                     </a>
                 </div>
-                <a href="{% url 'forum_list' course.id %}" class="btn btn-sm btn-outline-secondary w-100 mt-2" title="Forum Diskusi">
-                    <i class="bi bi-chat-dots"></i> Forum
-                </a>
             </div>
+            {% empty %}
+            <div class="text-center text-muted-custom p-4">
+                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                Belum ada kursus tersedia.
+            </div>
+            {% endfor %}
         </div>
     </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="alert alert-info" role="alert">
-            <i class="bi bi-info-circle"></i> Belum ada kursus tersedia saat ini. Harap hubungi admin untuk mendapatkan akses ke kursus.
-        </div>
-    </div>
-    {% endfor %}
-</div>
 
-<!-- Info Section -->
-<div class="row mt-5">
-    <div class="col-md-4 mb-3">
-        <div class="card border-0 bg-light">
-            <div class="card-body">
-                <h6 class="card-title">
-                    <i class="bi bi-lightbulb text-warning"></i> Tip Belajar
-                </h6>
-                <p class="small">Akses semua materi kursus, submit tugas tepat waktu, dan aktif berdiskusi dengan teman dan dosen.</p>
+    <!-- Tip Belajar (2x1) -->
+    <div class="card bento-item bento-2x1 text-white p-4" style="background: linear-gradient(135deg, var(--primary-color) 0%, #8655ff 100%); border: none !important;">
+        <div class="d-flex justify-content-between h-100 flex-column">
+            <div>
+                <h5 class="fw-bold mb-2"><i class="bi bi-lightbulb me-2"></i>Tip Belajar</h5>
+                <p class="mb-0 opacity-75">Akses semua materi kursus, submit tugas tepat waktu, dan aktif berdiskusi dengan teman dan dosen untuk mendapatkan hasil maksimal.</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <div class="card border-0 bg-light">
-            <div class="card-body">
-                <h6 class="card-title">
-                    <i class="bi bi-clock text-info"></i> Deadline
-                </h6>
-                <p class="small">Perhatikan tanggal deadline untuk setiap tugas dan kuis. Pastikan Anda mengumpulkan sebelum batas waktu.</p>
-            </div>
+
+    <!-- Info Section: Deadline (2x1) -->
+    <div class="card bento-item bento-2x1">
+        <div class="card-body">
+            <h6 class="fw-bold mb-3" style="color: var(--text-main);">
+                <i class="bi bi-clock me-2" style="color: #00b5ff;"></i> Deadline Mendatang
+            </h6>
+            <p class="small text-muted-custom mb-0">Perhatikan tanggal deadline untuk setiap tugas dan kuis. Pastikan Anda mengumpulkan sebelum batas waktu agar tidak tertinggal.</p>
         </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <div class="card border-0 bg-light">
-            <div class="card-body">
-                <h6 class="card-title">
-                    <i class="bi bi-question-circle text-danger"></i> Bantuan
-                </h6>
-                <p class="small">Jika mengalami kesulitan, jangan ragu untuk bertanya di forum diskusi atau menghubungi dosen.</p>
-            </div>
+
+    <!-- Info Section: Bantuan (2x1) -->
+    <div class="card bento-item bento-2x1">
+        <div class="card-body">
+            <h6 class="fw-bold mb-3" style="color: var(--text-main);">
+                <i class="bi bi-question-circle me-2" style="color: var(--danger-color);"></i> Pusat Bantuan
+            </h6>
+            <p class="small text-muted-custom mb-0">Jika mengalami kesulitan dalam pembelajaran, jangan ragu untuk bertanya di forum diskusi atau menghubungi dosen pengampu.</p>
         </div>
     </div>
 </div>

@@ -7,64 +7,162 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4318ff;
+            --bg-color: #F4F7FE;
+            --success-color: #05CD99;
+            --danger-color: #EE5D50;
+            --text-main: #2b3674;
+            --text-muted: #a3aed1;
+        }
+
         body {
-            background-color: #f8f9fa;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Inter, Roboto, sans-serif;
         }
         .navbar {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            background-color: #ffffff !important;
+        }
+        .navbar-brand {
+            color: var(--text-main) !important;
+        }
+        .navbar-brand i {
+            color: var(--primary-color) !important;
+        }
+        .navbar-nav .nav-link {
+            color: var(--text-main) !important;
         }
         .sidebar {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
             position: sticky;
             top: 80px;
+            border: 1px solid rgba(0,0,0,0.05);
         }
         .sidebar .nav-link {
-            color: #333;
-            border-left: 3px solid transparent;
+            color: var(--text-muted);
+            border-radius: 10px;
             margin-bottom: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            transition: all 0.3s ease;
+            border-left: none;
         }
         .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background-color: #f0f0f0;
-            border-left-color: #0d6efd;
-            color: #0d6efd;
+            background-color: rgba(67, 24, 255, 0.05);
+            color: var(--primary-color);
+            font-weight: 600;
         }
         .card {
-            border: none;
+            border: 1px solid rgba(0,0,0,0.05) !important;
+            background-color: #ffffff;
+            border-radius: 20px !important;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
+        
+        /* Bento Grid System */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(120px, auto);
+            gap: 1.5rem;
+        }
+        .bento-item {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .bento-1x1 { grid-column: span 1; grid-row: span 1; }
+        .bento-2x1 { grid-column: span 2; grid-row: span 1; }
+        .bento-2x2 { grid-column: span 2; grid-row: span 2; }
+        .bento-1x2 { grid-column: span 1; grid-row: span 2; }
+        .bento-3x1 { grid-column: span 3; grid-row: span 1; }
+        .bento-3x2 { grid-column: span 3; grid-row: span 2; }
+        .bento-4x1 { grid-column: span 4; grid-row: span 1; }
+
+        @media (max-width: 1200px) {
+            .bento-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .bento-2x2 { grid-column: span 2; grid-row: span 2; }
+        }
+        @media (max-width: 991px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .bento-2x1, .bento-2x2, .bento-1x2, .bento-3x1, .bento-4x1 {
+                grid-column: span 2;
+            }
+        }
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+            .bento-1x1, .bento-2x1, .bento-2x2, .bento-1x2, .bento-3x1, .bento-4x1 {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+        }
+
+        /* Search Frame */
+        .search-frame {
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+        .search-frame input {
+            border: none;
+            outline: none;
+            width: 100%;
+            margin-left: 0.75rem;
+            background: transparent;
+            color: var(--text-main);
+        }
+        .search-frame input::placeholder {
+            color: var(--text-muted);
+        }
+        
         .btn-custom {
-            border-radius: 6px;
+            border-radius: 12px;
         }
         .badge-custom {
             padding: 0.5rem 0.75rem;
-            border-radius: 6px;
+            border-radius: 8px;
         }
+        .text-main { color: var(--text-main) !important; }
+        .text-muted-custom { color: var(--text-muted) !important; }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <nav class="navbar navbar-expand-lg mb-4">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
-                <i class="bi bi-book-fill"></i> Portal Belajar LMS
+                <i class="bi bi-book-fill me-2"></i> Portal Belajar LMS
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <span class="nav-link text-white">
-                        <i class="bi bi-person-circle"></i> {{ user.username }} ({{ user.get_role_display }})
+                <div class="navbar-nav ms-auto align-items-center">
+                    <span class="nav-link fw-medium">
+                        <i class="bi bi-person-circle me-1"></i> {{ user.username }} ({{ user.get_role_display }})
                     </span>
-                    <a class="nav-link btn btn-outline-light btn-sm ms-2" href="{% url 'logout' %}">
-                        <i class="bi bi-box-arrow-right"></i> Logout
+                    <a class="nav-link btn text-danger btn-sm ms-3 fw-medium d-flex align-items-center" href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
                     </a>
                 </div>
             </div>

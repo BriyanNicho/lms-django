@@ -3,54 +3,66 @@
 {% block title %}Daftar Kuis - LMS{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold">
-            <i class="bi bi-question-circle"></i> Daftar Kuis
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold mb-1" style="color: var(--text-main);">
+            <i class="bi bi-question-circle text-danger"></i> Daftar Kuis
         </h2>
-        <p class="text-muted">{{ course.title }}</p>
+        <p class="text-muted-custom mb-0">{{ course.title }}</p>
     </div>
 </div>
 
-{% if quizzes %}
-<div class="row">
-    {% for quiz in quizzes %}
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header bg-light">
-                <h6 class="mb-0">
-                    <i class="bi bi-question-circle-fill"></i> {{ quiz.title }}
-                </h6>
-            </div>
-            <div class="card-body">
-                <p class="mb-3">
-                    <strong>Jumlah Soal:</strong> <span class="badge bg-primary">{{ quiz.questions.count }} Soal</span>
-                </p>
-                
-                <div class="alert alert-warning mb-3">
-                    <strong>
-                        <i class="bi bi-exclamation-circle"></i> Deadline:
-                    </strong><br>
-                    {{ quiz.due_date|date:"d M Y H:i" }}
-                </div>
+<div class="bento-grid">
+    <div class="card bento-item bento-4x1" style="grid-row: span 2;">
+        <div class="card-body p-4 bg-light rounded" style="border-radius: 20px;">
+            {% if quizzes %}
+            <div class="row">
+                {% for quiz in quizzes %}
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 h-100" style="border-radius: 15px; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background-color: rgba(238, 93, 80, 0.1); color: var(--danger-color);">
+                                    <i class="bi bi-question-circle-fill"></i>
+                                </div>
+                                <h6 class="fw-bold mb-0" style="color: var(--text-main);">{{ quiz.title }}</h6>
+                            </div>
+                            
+                            <div class="mb-3 mt-auto">
+                                <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(67, 24, 255, 0.1); color: var(--primary-color);">
+                                    <i class="bi bi-list-ol me-1"></i> {{ quiz.questions.count }} Soal
+                                </span>
+                            </div>
+                            
+                            <div class="alert alert-warning mb-3 border-0" style="background-color: rgba(255, 171, 0, 0.1); color: #ffab00; border-radius: 10px; padding: 10px 15px;">
+                                <i class="bi bi-clock me-1"></i> <strong>Deadline:</strong><br>
+                                <span class="small">{{ quiz.due_date|date:"d M Y H:i" }}</span>
+                            </div>
 
-                <a href="{% url 'quiz_detail' quiz.id %}" class="btn btn-primary w-100">
-                    <i class="bi bi-arrow-right"></i> Mulai Kuis
-                </a>
+                            <a href="{% url 'quiz_detail' quiz.id %}" class="btn w-100 text-white rounded-pill" style="background-color: var(--danger-color);">
+                                <i class="bi bi-play-circle me-1"></i> Mulai Kuis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; background-color: rgba(238, 93, 80, 0.1); color: var(--danger-color); font-size: 32px;">
+                    <i class="bi bi-journal-x"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Belum Ada Kuis</h5>
+                <p class="text-muted-custom mb-0">Belum ada kuis yang tersedia untuk kursus ini.</p>
+            </div>
+            {% endif %}
         </div>
     </div>
-    {% endfor %}
 </div>
-{% else %}
-<div class="alert alert-info">
-    <i class="bi bi-info-circle"></i> Belum ada kuis untuk kursus ini.
-</div>
-{% endif %}
 
 <div class="row mt-4">
     <div class="col-12">
-        <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">
+        <a href="{% url 'course_detail' course.id %}" class="btn rounded-pill px-4 text-muted-custom" style="background-color: white; border: 1px solid rgba(0,0,0,0.1);">
             <i class="bi bi-arrow-left"></i> Kembali ke Detail Kursus
         </a>
     </div>

@@ -5,103 +5,116 @@
 {% block extra_css %}
 <style>
     .question-card {
-        border-left: 4px solid #0d6efd;
+        border-left: 4px solid var(--danger-color) !important;
         margin-bottom: 20px;
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     }
     .option-label {
         cursor: pointer;
-        padding: 10px;
-        border-radius: 6px;
-        transition: all 0.3s;
+        padding: 12px 15px;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        display: block;
+        border: 1px solid rgba(0,0,0,0.05);
+        margin-bottom: 10px;
     }
     .option-label:hover {
-        background-color: #f0f0f0;
+        background-color: rgba(67, 24, 255, 0.05);
+        border-color: rgba(67, 24, 255, 0.2);
     }
     .option-label input[type="radio"] {
-        margin-right: 10px;
+        margin-right: 12px;
+        accent-color: var(--primary-color);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold">
-            <i class="bi bi-question-circle"></i> {{ quiz.title }}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold mb-1" style="color: var(--text-main);">
+            <i class="bi bi-question-circle text-danger"></i> {{ quiz.title }}
         </h2>
-        <p class="text-muted">
-            <i class="bi bi-pencil-square"></i> Total: {{ question_count }} Soal |
-            <i class="bi bi-calendar"></i> Deadline: {{ quiz.due_date|date:"d M Y H:i" }}
+        <p class="text-muted-custom mb-0">
+            Kuis untuk {{ quiz.course.title }}
         </p>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i>
-            <strong>Petunjuk:</strong> Pilih jawaban yang paling tepat untuk setiap pertanyaan di bawah ini.
+<div class="bento-grid">
+    <!-- Quiz Info (4x1) -->
+    <div class="card bento-item bento-4x1" style="background: linear-gradient(135deg, var(--danger-color) 0%, #ff8a75 100%); color: white; border: none !important;">
+        <div class="card-body d-flex flex-column flex-md-row justify-content-around align-items-center py-4">
+            <div class="text-center mb-3 mb-md-0">
+                <i class="bi bi-list-ol fs-1 opacity-75 mb-2"></i>
+                <h4 class="fw-bold mb-0">{{ question_count }}</h4>
+                <small class="opacity-75">Total Soal</small>
+            </div>
+            <div class="text-center">
+                <i class="bi bi-clock fs-1 opacity-75 mb-2"></i>
+                <h4 class="fw-bold mb-0">{{ quiz.due_date|date:"d M Y" }}</h4>
+                <small class="opacity-75">{{ quiz.due_date|time:"H:i" }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Form (4x1 / spans rows) -->
+    <div class="card bento-item bento-4x1" style="grid-row: span 3; background-color: transparent; border: none !important; box-shadow: none;">
+        <div class="alert alert-info border-0 shadow-sm" style="background-color: white; border-radius: 15px; color: var(--text-main);">
+            <i class="bi bi-info-circle-fill text-primary me-2"></i>
+            <strong>Petunjuk:</strong> Pilih jawaban yang paling tepat untuk setiap pertanyaan di bawah ini. Pastikan Anda menyelesaikan sebelum waktu habis.
         </div>
 
         <form id="quizForm">
             {% csrf_token %}
             
             {% for question in questions %}
-            <div class="card question-card">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
+            <div class="card question-card bg-white">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                    <span class="badge rounded-pill px-3 py-2 mb-2" style="background-color: rgba(238, 93, 80, 0.1); color: var(--danger-color);">
                         Soal {{ forloop.counter }} dari {{ question_count }}
-                    </h6>
+                    </span>
+                    <h6 class="fw-bold mt-2" style="color: var(--text-main); font-size: 1.1rem; line-height: 1.5;">{{ question.text }}</h6>
                 </div>
-                <div class="card-body">
-                    <p class="mb-4"><strong>{{ question.text }}</strong></p>
-                    
-                    <div class="mb-3">
-                        <label class="option-label">
-                            <input type="radio" name="question_{{ question.id }}" value="A" required>
-                            <strong>A.</strong> {{ question.option_a }}
-                        </label>
-                    </div>
+                <div class="card-body pt-3 pb-4">
+                    <label class="option-label">
+                        <input type="radio" name="question_{{ question.id }}" value="A" required>
+                        <strong>A.</strong> <span class="text-muted-custom">{{ question.option_a }}</span>
+                    </label>
 
-                    <div class="mb-3">
-                        <label class="option-label">
-                            <input type="radio" name="question_{{ question.id }}" value="B">
-                            <strong>B.</strong> {{ question.option_b }}
-                        </label>
-                    </div>
+                    <label class="option-label">
+                        <input type="radio" name="question_{{ question.id }}" value="B">
+                        <strong>B.</strong> <span class="text-muted-custom">{{ question.option_b }}</span>
+                    </label>
 
-                    <div class="mb-3">
-                        <label class="option-label">
-                            <input type="radio" name="question_{{ question.id }}" value="C">
-                            <strong>C.</strong> {{ question.option_c }}
-                        </label>
-                    </div>
+                    <label class="option-label">
+                        <input type="radio" name="question_{{ question.id }}" value="C">
+                        <strong>C.</strong> <span class="text-muted-custom">{{ question.option_c }}</span>
+                    </label>
 
-                    <div class="mb-0">
-                        <label class="option-label">
-                            <input type="radio" name="question_{{ question.id }}" value="D">
-                            <strong>D.</strong> {{ question.option_d }}
-                        </label>
-                    </div>
+                    <label class="option-label mb-0">
+                        <input type="radio" name="question_{{ question.id }}" value="D">
+                        <strong>D.</strong> <span class="text-muted-custom">{{ question.option_d }}</span>
+                    </label>
                 </div>
             </div>
             {% endfor %}
 
-            <div class="row mt-4">
-                <div class="col-12">
-                    <button type="submit" class="btn btn-success btn-lg w-100" id="submitBtn">
-                        <i class="bi bi-check-circle"></i> Serahkan Jawaban
-                    </button>
-                </div>
+            <div class="mt-4 pt-2">
+                <button type="submit" class="btn text-white btn-lg w-100 rounded-pill fw-bold shadow-sm" id="submitBtn" style="background-color: var(--success-color); padding: 15px;">
+                    <i class="bi bi-check-circle-fill me-2"></i> Serahkan Jawaban
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-12">
-        <a href="{% url 'quiz_list' quiz.course.id %}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Kembali ke Daftar Kuis
+<div class="row mt-5">
+    <div class="col-12 text-center">
+        <a href="{% url 'quiz_list' quiz.course.id %}" class="btn rounded-pill px-4 text-muted-custom" style="background-color: white; border: 1px solid rgba(0,0,0,0.1);">
+            <i class="bi bi-arrow-left"></i> Batal & Kembali
         </a>
     </div>
 </div>
@@ -113,7 +126,7 @@ document.getElementById('quizForm').addEventListener('submit', function(e) {
     
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="bi bi-hourglass"></i> Mengirim...';
+    submitBtn.innerHTML = '<i class="bi bi-hourglass me-2"></i> Mengirim...';
 
     // Kumpulkan semua jawaban
     const formData = new FormData(this);
@@ -123,7 +136,7 @@ document.getElementById('quizForm').addEventListener('submit', function(e) {
     setTimeout(() => {
         alert('Jawaban Anda telah dikirim. Terima kasih!');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Serahkan Jawaban';
+        submitBtn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i> Serahkan Jawaban';
     }, 1000);
 });
 </script>
