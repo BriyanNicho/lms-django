@@ -13,7 +13,12 @@
             <p class="page-subtitle">Kelola kelas dan pantau aktivitas mahasiswa Anda.</p>
         </div>
     </div>
-    <span class="badge bg-info-subtle text-info mt-3 mt-md-0">Ringkasan kelas hari ini</span>
+    <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+        <span class="badge bg-info-subtle text-info align-self-center">Ringkasan kelas hari ini</span>
+        <a href="{% url 'course_create' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle"></i> Buat Kursus
+        </a>
+    </div>
 </div>
 
 <!-- Quick Stats -->
@@ -117,7 +122,7 @@
                     <a href="{% url 'course_detail' course.id %}" class="btn btn-sm btn-outline-primary" title="Lihat Kursus">
                         <i class="bi bi-eye"></i> Lihat
                     </a>
-                    <a href="/admin/courses/course/{{ course.id }}/change/" class="btn btn-sm btn-outline-warning" target="_blank" title="Edit Kursus">
+                    <a href="{% url 'course_edit' course.id %}" class="btn btn-sm btn-outline-warning" title="Edit Kursus">
                         <i class="bi bi-pencil"></i> Edit
                     </a>
                 </div>
@@ -142,6 +147,11 @@
         <h5 class="fw-bold">
             <i class="bi bi-lightning-fill"></i> Aksi Cepat
         </h5>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'course_create' %}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-journal-plus"></i> Buat Kursus
+        </a>
     </div>
     <div class="col-md-4 mb-3">
         <a href="/admin/assessments/assignment/add/" target="_blank" class="btn btn-outline-primary w-100">
